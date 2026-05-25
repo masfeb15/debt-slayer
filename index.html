@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Debt Slayer ⚔️</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rajdhani:wght@400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="scanlines"></div>
+
+<div id="app">
+  <div class="sync-bar" id="sync-bar">
+    <span class="sync-dot" id="sync-dot"></span>
+    <span class="sync-text" id="sync-text">Belum terhubung — setup sync di Edit ⚙️</span>
+    <button class="sync-btn" id="sync-btn" onclick="manualSync()" title="Sync sekarang" aria-label="Sync sekarang">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M23 4v6h-6"/><path d="M1 20v-6h6"/>
+        <path d="M3.51 9a9 9 0 0114.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0020.49 15"/>
+      </svg>
+    </button>
+  </div>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">⚔️</span>
+        <span class="logo-text">DEBT<span class="logo-accent">SLAYER</span></span>
+      </div>
+      <div class="header-right">
+        <div class="level-badge" id="level-badge">
+          <span class="lv-label">LV</span>
+          <span class="lv-num" id="lv-num">1</span>
+          <span class="lv-name" id="lv-name">PEJUANG</span>
+        </div>
+        <button class="icon-btn" onclick="openEditMenu()" title="Edit Data" aria-label="Edit data">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div class="xp-section">
+      <div class="xp-labels">
+        <span id="xp-current">0 XP</span>
+        <span id="xp-next">/ 500 XP</span>
+      </div>
+      <div class="xp-track"><div class="xp-fill" id="xp-fill"></div></div>
+    </div>
+  </header>
+
+  <div class="stats-bar">
+    <div class="stat-item"><div class="stat-val" id="s-total">—</div><div class="stat-lbl">TOTAL HUTANG</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-val" id="s-lunas" style="color:var(--c-green)">0</div><div class="stat-lbl">LUNAS</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-val" id="s-sisa">—</div><div class="stat-lbl">TERSISA</div></div>
+    <div class="stat-divider"></div>
+    <div class="stat-item"><div class="stat-val" id="s-gaji" style="color:var(--c-cyan)">—</div><div class="stat-lbl">INCOME</div></div>
+  </div>
+
+  <nav class="tabs" role="tablist">
+    <button class="tab active" data-tab="misi"    onclick="switchTab('misi')"   role="tab">⚔️ MISI</button>
+    <button class="tab"        data-tab="budget"  onclick="switchTab('budget')" role="tab">💰 BUDGET</button>
+    <button class="tab"        data-tab="insight" onclick="switchTab('insight')" role="tab">🔮 INSIGHT</button>
+    <button class="tab"        data-tab="trophy"  onclick="switchTab('trophy')" role="tab">🏆 TROPHY</button>
+    <button class="tab"        data-tab="poace"   onclick="switchTab('poace')"  role="tab">📋 POACE</button>
+  </nav>
+
+  <main class="content">
+    <div id="tab-misi" class="section active">
+      <div class="section-header">
+        <div class="section-title">STRATEGI: DEADLINE FIRST</div>
+        <div class="section-sub">Serang musuh yang paling dekat deadline-nya lebih dulu</div>
+      </div>
+      <div id="debt-list"></div>
+    </div>
+    <div id="tab-budget" class="section">
+      <div class="section-header">
+        <div class="section-title">ALOKASI RESOURCES</div>
+        <div class="section-sub">Prinsip 10/30/30/30 — blueprint kebebasan finansialmu</div>
+      </div>
+      <div class="surplus-card">
+        <div class="surplus-label">⚡ SURPLUS SETELAH KEBUTUHAN POKOK</div>
+        <div class="surplus-val" id="surplus-val">—</div>
+        <div class="surplus-sub" id="surplus-sub">—</div>
+      </div>
+      <div class="budget-grid" id="budget-grid"></div>
+      <div class="budget-warning" id="budget-warning"></div>
+    </div>
+    <div id="tab-insight" class="section">
+      <div class="section-header">
+        <div class="section-title">INTEL & STRATEGI</div>
+        <div class="section-sub">Informasi kunci untuk mempercepat kemenanganmu</div>
+      </div>
+      <div id="insight-list"></div>
+    </div>
+    <div id="tab-trophy" class="section">
+      <div class="section-header">
+        <div class="section-title">HALL OF FAME</div>
+        <div class="section-sub">Kumpulkan semua achievement — buktikan kamu bisa!</div>
+      </div>
+      <div id="trophy-list"></div>
+    </div>
+    <div id="tab-poace" class="section">
+      <div class="section-header">
+        <div class="section-title">SISTEM MANAJEMEN POACE</div>
+        <div class="section-sub">Framework untuk menaklukkan kebebasan finansial</div>
+      </div>
+      <div id="poace-list"></div>
+    </div>
+  </main>
+</div>
+
+<!-- MODALS -->
+<div class="overlay" id="pay-overlay" onclick="closePay()"></div>
+<div class="modal" id="pay-modal">
+  <div class="modal-handle"></div>
+  <div class="modal-header"><div class="modal-title" id="pay-title">BAYAR HUTANG</div><button class="modal-close" onclick="closePay()">✕</button></div>
+  <div class="modal-body">
+    <div class="modal-debt-info" id="pay-info"></div>
+    <label class="field-label">JUMLAH PEMBAYARAN (Rp)</label>
+    <input type="number" class="field-input" id="pay-input" inputmode="numeric" placeholder="Masukkan nominal...">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closePay()">BATAL</button>
+      <button class="btn-primary" onclick="confirmPay()">⚔️ BAYAR SEKARANG</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="edit-overlay" onclick="closeEditMenu()"></div>
+<div class="modal" id="edit-modal">
+  <div class="modal-handle"></div>
+  <div class="modal-header"><div class="modal-title">✏️ EDIT DATA</div><button class="modal-close" onclick="closeEditMenu()">✕</button></div>
+  <div class="modal-body">
+    <div class="edit-menu-grid">
+      <button class="edit-menu-btn" onclick="closeEditMenu();openAddDebt()"><span class="emb-icon">⚔️</span><span class="emb-label">Tambah Hutang</span></button>
+      <button class="edit-menu-btn" onclick="closeEditMenu();openEditIncome()"><span class="emb-icon">💰</span><span class="emb-label">Edit Income</span></button>
+      <button class="edit-menu-btn" onclick="closeEditMenu();openEditLiving()"><span class="emb-icon">🏠</span><span class="emb-label">Kebutuhan Pokok</span></button>
+      <button class="edit-menu-btn" onclick="closeEditMenu();openManageDebts()"><span class="emb-icon">📋</span><span class="emb-label">Kelola Hutang</span></button>
+      <button class="edit-menu-btn" onclick="closeEditMenu();openSettings()"><span class="emb-icon">⚙️</span><span class="emb-label">Pengaturan Sync</span></button>
+      <button class="edit-menu-btn danger" onclick="closeEditMenu();confirmReset()"><span class="emb-icon">🔄</span><span class="emb-label">Reset Data</span></button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="add-overlay" onclick="closeAddDebt()"></div>
+<div class="modal" id="add-modal">
+  <div class="modal-handle"></div>
+  <div class="modal-header"><div class="modal-title">⚔️ TAMBAH HUTANG BARU</div><button class="modal-close" onclick="closeAddDebt()">✕</button></div>
+  <div class="modal-body">
+    <label class="field-label">NAMA HUTANG</label>
+    <input type="text" class="field-input" id="add-name" placeholder="contoh: KTA BCA">
+    <label class="field-label">NOMINAL SISA (Rp)</label>
+    <input type="number" class="field-input" id="add-nominal" inputmode="numeric" placeholder="contoh: 500000">
+    <label class="field-label">DEADLINE (contoh: Jun 2026)</label>
+    <input type="text" class="field-input" id="add-end" placeholder="Jun 2026">
+    <label class="field-label">TINGKAT URGENSI</label>
+    <select class="field-input" id="add-urgency">
+      <option value="urgent">⚠ Mendesak — deadline bulan ini/depan</option>
+      <option value="soon">⏰ Segera — 2–4 bulan lagi</option>
+      <option value="safe">✅ Aman — lebih dari 4 bulan</option>
+    </select>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeAddDebt()">BATAL</button>
+      <button class="btn-primary" onclick="confirmAddDebt()">+ TAMBAH</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="income-overlay" onclick="closeEditIncome()"></div>
+<div class="modal" id="income-modal">
+  <div class="modal-handle"></div>
+  <div class="modal-header"><div class="modal-title">💰 EDIT INCOME</div><button class="modal-close" onclick="closeEditIncome()">✕</button></div>
+  <div class="modal-body">
+    <label class="field-label">TOTAL PENGHASILAN BULANAN (Rp)</label>
+    <input type="number" class="field-input" id="income-input" inputmode="numeric" placeholder="5883000">
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEditIncome()">BATAL</button>
+      <button class="btn-primary" onclick="confirmEditIncome()">SIMPAN</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="living-overlay" onclick="closeEditLiving()"></div>
+<div class="modal" id="living-modal">
+  <div class="modal-handle"></div>
+  <div class="modal-header"><div class="modal-title">🏠 KEBUTUHAN POKOK</div><button class="modal-close" onclick="closeEditLiving()">✕</button></div>
+  <div class="modal-body">
+    <div id="living-list"></div>
+    <div class="living-add">
+      <input type="text" class="field-input" id="living-name" placeholder="Nama kebutuhan (contoh: listrik)">
+      <input type="number" class="field-input" id="living-amount" inputmode="numeric" placeholder="Nominal (contoh: 150000)">
+      <button class="btn-primary" style="width:100%;margin-top:2px" onclick="addLivingItem()">+ TAMBAH ITEM</button>
+    </div>
+    <div class="modal-actions" style="margin-top:12px"><button class="btn-cancel" onclick="closeEditLiving()">TUTUP</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="manage-overlay" onclick="closeManageDebts()"></div>
+<div class="modal" id="manage-modal">
+  <div class="modal-handle"></div>
+  <div class="modal-header"><div class="modal-title">📋 KELOLA HUTANG</div><button class="modal-close" onclick="closeManageDebts()">✕</button></div>
+  <div class="modal-body">
+    <div id="manage-list"></div>
+    <div class="modal-actions"><button class="btn-cancel" onclick="closeManageDebts()">TUTUP</button></div>
+  </div>
+</div>
+
+<div class="overlay" id="settings-overlay" onclick="closeSettings()"></div>
+<div class="modal" id="settings-modal">
+  <div class="modal-handle"></div>
+  <div class="modal-header"><div class="modal-title">⚙️ PENGATURAN SYNC</div><button class="modal-close" onclick="closeSettings()">✕</button></div>
+  <div class="modal-body">
+    <div class="settings-info">
+      <div class="si-icon">📊</div>
+      <div class="si-text">Masukkan URL Google Apps Script untuk sinkronisasi data antar HP & laptop secara otomatis.</div>
+    </div>
+    <label class="field-label">GOOGLE APPS SCRIPT URL</label>
+    <input type="url" class="field-input" id="script-url-input" placeholder="https://script.google.com/macros/s/...">
+    <div class="url-hint">Lihat README.md untuk cara mendapatkan URL ini.</div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeSettings()">BATAL</button>
+      <button class="btn-primary" onclick="saveScriptUrl()">SIMPAN & TEST</button>
+    </div>
+    <div id="test-result" style="margin-top:12px;font-size:12px;color:var(--c-muted);display:none"></div>
+  </div>
+</div>
+
+<!-- POPUPS -->
+<div class="reward-overlay" id="reward-overlay">
+  <div class="reward-box">
+    <div class="reward-emoji" id="reward-emoji">🎉</div>
+    <div class="reward-title" id="reward-title">HUTANG LUNAS!</div>
+    <div class="reward-xp" id="reward-xp">+100 XP</div>
+    <div class="reward-sub" id="reward-sub"></div>
+  </div>
+</div>
+
+<div class="levelup-overlay" id="levelup-overlay">
+  <div class="levelup-box">
+    <div class="lu-label">⬆ LEVEL UP!</div>
+    <div class="lu-level" id="lu-level">LV 2</div>
+    <div class="lu-name" id="lu-name">PEMBERANI</div>
+    <div class="lu-sub">Semakin dekat ke kebebasan finansial!</div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/config.js"></script>
+<script src="js/data.js"></script>
+<script src="js/sync.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
